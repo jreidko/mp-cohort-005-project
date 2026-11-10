@@ -31,7 +31,7 @@ export enum QuestionType {
   TrueFalse = "true_false",
 }
 
-export enum RefundStatus {
+export enum RefundRequestStatus {
   Requested = "requested",
   Approved = "approved",
   Declined = "declined",
@@ -229,7 +229,8 @@ export const purchases = sqliteTable(
   (table) => [index("purchases_course_idx").on(table.courseId)]
 );
 
-export const refunds = sqliteTable(
+// Each row is a Refund Request. The table keeps its original name.
+export const refundRequests = sqliteTable(
   "refunds",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -238,8 +239,8 @@ export const refunds = sqliteTable(
       .references(() => purchases.id),
     status: text("status")
       .notNull()
-      .$type<RefundStatus>()
-      .default(RefundStatus.Requested),
+      .$type<RefundRequestStatus>()
+      .default(RefundRequestStatus.Requested),
     // The learner's own words, in the box on the course page.
     reason: text("reason").notNull(),
     // Null until someone approves — a declined request refunds nothing.
